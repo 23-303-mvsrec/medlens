@@ -238,9 +238,11 @@
       "sources": [
         "Metro Diagnostic Report Page 2"
       ],
-      "status": "UNRESOLVED",
+      "status": "RESOLVED",
       "created_at": "2026-09-05 10:25",
-      "_id": "6a9bdfebbfbf6089d8d10c1c"
+      "_id": "6a9bdfebbfbf6089d8d10c1c",
+      "resolution_note": "taken relevant action",
+      "resolved_at": "2026-09-05 12:25"
     },
     {
       "id": "rev-104",
@@ -280,6 +282,17 @@
       "source": "Clinical Reviewer",
       "entity_id": "rev-101",
       "_id": "6a9be1136d1fad9b2b5505f4"
+    },
+    {
+      "id": "evt-106a4c",
+      "patient_id": "p-101",
+      "event_type": "REVIEW_RESOLVED",
+      "title": "Resolved Issue: Missing Reference Range: Serum Ferritin",
+      "description": "Reviewer resolution: taken relevant action",
+      "timestamp": "2026-09-05 12:25",
+      "source": "Clinical Reviewer",
+      "entity_id": "rev-103",
+      "_id": "6a9c0a3795be67d0d26f35b9"
     }
   ]
 }
