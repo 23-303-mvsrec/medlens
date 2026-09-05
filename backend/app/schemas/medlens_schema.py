@@ -157,3 +157,14 @@ class DashboardStats(BaseModel):
     not_determined: int
     verified_findings: int
     recent_activity: List[TimelineEvent] = Field(default_factory=list)
+
+class AssistantQueryRequest(BaseModel):
+    patient_id: str
+    query: str
+
+class AssistantQueryResponse(BaseModel):
+    answer: str
+    context_used: List[str] = Field(default_factory=list)
+    provenance_sources: List[str] = Field(default_factory=list)
+    suggested_followups: List[str] = Field(default_factory=list)
+    safety_disclaimer: str = "MedLens AI is an assistive clinical information synthesizer. It does not provide medical diagnoses or prescription advice. Always cross-reference with primary laboratory reports."

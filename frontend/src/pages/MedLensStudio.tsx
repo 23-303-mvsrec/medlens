@@ -29,6 +29,7 @@ import { SideBySideReviewer } from '@/components/medlens/SideBySideReviewer';
 import { PatientIntakeModal } from '@/components/medlens/PatientIntakeModal';
 import { TrendComparisonModal } from '@/components/medlens/TrendComparisonModal';
 import { MedicalReportUploader } from '@/components/medlens/MedicalReportUploader';
+import { SmartAssistantDrawer } from '@/components/medlens/SmartAssistantDrawer';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -419,6 +420,12 @@ export default function MedLensStudio() {
           patientName={patientIntake.full_name}
         />
       )}
+
+      {/* Smart Context-Aware Assistant */}
+      <SmartAssistantDrawer 
+        patientId={patientIntake.patient_id || 'P-101'}
+        patientName={patientIntake.full_name}
+      />
 
       {/* Side-by-Side Reviewer: Source Document Stream vs Structured Record Table */}
       {currentAnalysis && (

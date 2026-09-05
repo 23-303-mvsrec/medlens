@@ -1052,4 +1052,110 @@ Respond in strict JSON:
             "recent_activity": [_json_safe(e) for e in recent_events]
         }
 
+    async def query_clinical_assistant(self, patient_id: str, query: str) -> Dict[str, Any]:
+        """
+        Smart, dynamic assistant that performs contextual clinical reasoning over
+        patient records, laboratory findings, review items, and longitudinal trends.
+        Strictly observes non-diagnostic boundaries and cites evidence.
+        """
+        db = get_database()
+        intake = await db[self.intakes_collection].find_one({"patient_id": patient_id})
+        findings = await db[self.findings_collection].find({"patient_id": patient_id}).to_list(length=100)
+        review_items = await db[self.review_collection].find({"patient_id": patient_id, "status": "OPEN"}).to_list(length=50)
+
+        patient_name = intake.get("full_name", patient_id) if intake else patient_id
+        allergies = intake.get("known_allergies", []) if intake else []
+        meds = intake.get("active_medications", []) if intake else []
+        conditions = intake.get("chronic_conditions", []) if intake else []
+        symptoms = intake.get("presenting_symptoms", []) if intake else []
+
+        high_findings = [f for f in findings if f.get("status") == "HIGH"]
+        low_findings = [f for f in findings if f.get("status") == "LOW"]
+        normal_findings = [f for f in findings if f.get("status") == "NORMAL"]
+        undetermined_findings = [f for f in findings if f.get("status") == "NOT_DETERMINED"]
+
+        sources = []
+        for f in findings:
+            src = f"{f.get('source_document', 'Report.pdf')} (Page {f.get('source_page', 1)})"
+            if src not in sources:
+                sources.append(src)
+        if intake:
+            sources.append("Patient Intake Form (PATIENT_PROVIDED)")
+
+        context_items = [
+            f"Patient: {patient_name} (ID: {patient_id})",
+            f"Total Processed Findings: {len(findings)}",
+            f"Out-of-range Findings: {len(high_findings + low_findings)}",
+            f"Active Inconsistencies/Review Items: {len(review_items)}"
+        ]
+
+        q_lower = query.lower()
+        answer_parts = []
+        suggested_followups = []
+
+        if any(w in q_lower for w in ["abnormal", "high", "low", "out of range", "concern", "critical"]):
+            answer_parts.append(f"For {patient_name}, diagnostic panels reveal {len(high_findings) + len(low_findings)} biomarker(s) outside source laboratory reference boundaries:")
+            for h in high_findings:
+                answer_parts.append(f"• {h.get('test_name')}: {h.get('value')} {h.get('unit')} (HIGH vs ref: {h.get('reference_range', 'N/A')}) — Source: {h.get('source_document', 'Lab Report')}")
+            for l in low_findings:
+                answer_parts.append(f"• {l.get('test_name')}: {l.get('value')} {l.get('unit')} (LOW vs ref: {l.get('reference_range', 'N/A')}) — Source: {l.get('source_document', 'Lab Report')}")
+            if undetermined_findings:
+                answer_parts.append(f"Notice: {len(undetermined_findings)} test(s) had no printed reference ranges on the source report and are designated as NOT DETERMINED.")
+            suggested_followups = [
+                f"How do these abnormal markers correlate with {patient_name}'s presenting symptoms?",
+                "Are these findings consistent with the patient's historical baseline?",
+                "What clinical questions should be prioritized during physician review?"
+            ]
+        elif any(w in q_lower for w in ["allergy", "allergies", "conflict", "medication", "drug"]):
+            allergy_names = [a.get("allergen", str(a)) if isinstance(a, dict) else str(a) for a in allergies]
+            med_names = [m.get("medication_name", str(m)) if isinstance(m, dict) else str(m) for m in meds]
+            answer_parts.append(f"Intake reconciliation for {patient_name}:")
+            answer_parts.append(f"• Documented Allergies ({len(allergy_names)}): {', '.join(allergy_names) if allergy_names else 'None documented'}.")
+            answer_parts.append(f"• Self-Reported Medications ({len(med_names)}): {', '.join(med_names) if med_names else 'None reported'}.")
+            if review_items:
+                answer_parts.append(f"• Flagged Clinical Inconsistencies ({len(review_items)}):")
+                for r in review_items[:3]:
+                    answer_parts.append(f"  - [{r.get('severity', 'MEDIUM')}] {r.get('title')}: {r.get('description')}")
+            else:
+                answer_parts.append("• No unresolved cross-record conflicts are currently open.")
+            suggested_followups = [
+                "Verify whether active prescriptions conflict with documented allergens.",
+                "Review open conflict items in the MedLens Review Center.",
+                "Cross-check self-reported OTC medications with renal panel findings."
+            ]
+        elif any(w in q_lower for w in ["trend", "previous", "change", "history", "compare"]):
+            comparisons = await self.compare_patient_reports(patient_id)
+            if comparisons:
+                answer_parts.append(f"Longitudinal biomarker comparison for {patient_name}:")
+                for c in comparisons[:4]:
+                    dir_sym = "↑" if c.get("change_direction") == "INCREASED" else ("↓" if c.get("change_direction") == "DECREASED" else "→")
+                    answer_parts.append(f"• {c.get('test_name')}: {c.get('historical_value')} → {c.get('current_value')} {c.get('unit')} ({dir_sym} Δ {c.get('delta_value'):.1f})")
+            else:
+                answer_parts.append(f"Only one diagnostic encounter is currently on record for {patient_name}. Upload an additional historical encounter to generate longitudinal comparison trends.")
+            suggested_followups = [
+                "Which biomarkers exhibited the largest percentage change?",
+                "Has renal function remained stable across encounters?",
+                "Generate clinical timeline of all verified diagnostic encounters."
+            ]
+        else:
+            answer_parts.append(f"Clinical record synthesis for {patient_name} ({intake.get('age', 'N/A')} y/o {intake.get('sex', '')}):")
+            answer_parts.append(f"• Chronic Conditions: {', '.join(conditions) if conditions else 'None reported'}.")
+            answer_parts.append(f"• Presenting Symptoms: {', '.join([s.get('symptom', str(s)) if isinstance(s, dict) else str(s) for s in symptoms]) if symptoms else 'None noted'}.")
+            answer_parts.append(f"• Diagnostic Status: {len(findings)} total tests analyzed — {len(normal_findings)} normal, {len(high_findings)} elevated, {len(low_findings)} low, {len(undetermined_findings)} undetermined.")
+            if review_items:
+                answer_parts.append(f"• Action Required: {len(review_items)} item(s) pending clinical review in Review Center.")
+            suggested_followups = [
+                "What are the specific out-of-range values on the latest report?",
+                "Summarize potential medication or history discrepancies.",
+                "What follow-up lab tests are recommended for clinician discussion?"
+            ]
+
+        return {
+            "answer": "\n".join(answer_parts),
+            "context_used": context_items,
+            "provenance_sources": sources,
+            "suggested_followups": suggested_followups,
+            "safety_disclaimer": "MedLens AI is an assistive clinical information synthesizer. It does not provide medical diagnoses or prescription advice. Always cross-reference with primary laboratory reports."
+        }
+
 medlens_service = MedLensService()

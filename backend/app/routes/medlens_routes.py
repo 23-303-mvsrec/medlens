@@ -9,7 +9,9 @@ from ..schemas.medlens_schema import (
     VerifyFindingRequest,
     ResolveReviewItemRequest,
     DashboardStats,
-    BiomarkerComparison
+    BiomarkerComparison,
+    AssistantQueryRequest,
+    AssistantQueryResponse
 )
 from ..services.medlens_service import medlens_service
 
@@ -181,6 +183,14 @@ async def get_all_timeline():
 async def get_patient_timeline(patient_id: str):
     """Chronological patient timeline of intake, uploads, findings, and verifications."""
     return await medlens_service.get_patient_timeline(patient_id)
+
+# =============================================================================
+# SMART CLINICAL ASSISTANT
+# =============================================================================
+@router.post("/assistant/query", response_model=AssistantQueryResponse)
+async def query_clinical_assistant(req: AssistantQueryRequest):
+    """Smart, dynamic assistant performing contextual reasoning across patient intake, findings, and review radar."""
+    return await medlens_service.query_clinical_assistant(req.patient_id, req.query)
 
 # =============================================================================
 # DATABASE INSPECTOR & SETTINGS
