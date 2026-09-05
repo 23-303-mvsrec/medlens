@@ -1,4 +1,4 @@
-﻿"""
+"""
 MedLens Orchestrator Service Facade
 ===================================
 Coordinates domain logic, AI pipelines, caching, and persistence:
@@ -412,18 +412,31 @@ class MedLensService:
         findings = data.get("findings", [])
         review_items = data.get("review_items", [])
         intakes = data.get("intakes", {})
+        timeline = data.get("timeline", [])
 
         verified_count = len([f for f in findings if f.get("verification_status") in ["VERIFIED", "EDITED"]])
-        abnormal_count = len([f for f in findings if f.get("status") in ["HIGH", "LOW"]])
-        pending_reviews = len([r for r in review_items if r.get("status") == "PENDING"])
+        within_count = len([f for f in findings if f.get("status") in ["NORMAL", "WITHIN_RANGE"]])
+        outside_count = len([f for f in findings if f.get("status") in ["HIGH", "LOW", "ABNORMAL"]])
+        not_determined_count = len([f for f in findings if f.get("status") in ["NOT_DETERMINED", "INDETERMINATE"]])
+        pending_reviews = len([r for r in review_items if r.get("status") == "PENDING" or not r.get("resolved", True)])
+
+        recent_events = []
+        for e in sorted(timeline, key=lambda x: x.get("timestamp", ""), reverse=True)[:5]:
+            try:
+                recent_events.append(TimelineEvent(**e))
+            except Exception:
+                pass
 
         return DashboardStats(
             total_patients=max(len(intakes), 1),
             total_reports=len(reports),
             total_findings=len(findings),
+            needs_review=pending_reviews,
+            within_provided_range=within_count,
+            outside_provided_range=outside_count,
+            not_determined=not_determined_count,
             verified_findings=verified_count,
-            abnormal_biomarkers=abnormal_count,
-            pending_review_items=pending_reviews
+            recent_activity=recent_events
         )
 
     # -------------------------------------------------------------------------
@@ -432,7 +445,7 @@ class MedLensService:
     async def ask_clinical_assistant(self, patient_id: str, query: str) -> Dict[str, Any]:
         """Delegates clinical inquiries to the grounded Assistant Engine."""
         intake = await self.get_patient_intake(patient_id)
-        intake_dict = intake.dict() if intake else {"patient_id": patient_id, "full_name": "Patient"}
+        intake_dict = intake.model_dump() if intake else {"patient_id": patient_id, "full_name": "Patient"}
 
         data = self._read_local_store()
         findings = [f for f in data.get("findings", []) if f.get("patient_id") == patient_id]
