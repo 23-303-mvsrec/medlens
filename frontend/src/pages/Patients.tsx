@@ -1,3 +1,4 @@
+﻿import { API_BASE } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -49,7 +50,7 @@ const Patients = () => {
   const fetchPatients = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/medlens/patients');
+      const res = await fetch(`${API_BASE}/medlens/patients`);
       if (res.ok) {
         const data = await res.json();
         setPatients(data);
@@ -217,9 +218,9 @@ const Patients = () => {
                     </h3>
                     <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                       <span>{pat.age} years old</span>
-                      <span>•</span>
+                      <span>â€¢</span>
                       <span>{pat.gender}</span>
-                      <span>•</span>
+                      <span>â€¢</span>
                       <span className="font-mono font-semibold text-slate-700">ID: {pat.patient_id}</span>
                     </div>
                   </div>

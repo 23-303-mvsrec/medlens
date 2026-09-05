@@ -1,3 +1,4 @@
+﻿import { API_BASE } from '@/lib/api';
 import { create } from 'zustand';
 import { User, UserRole } from '../types';
 
@@ -12,7 +13,7 @@ interface AuthState {
   setRole: (role: UserRole) => void;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_URL = API_BASE;
 
 const defaultDemoUser: User = {
   id: 'u-clinician-01',

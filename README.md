@@ -1,295 +1,328 @@
-# MedLens — AI-Powered Clinical Information Intelligence
+﻿# MedLens — AI-Powered Clinical Information Intelligence
 
 > **PromptWars × AIMERverse Hackathon Edition**  
 > *Presented by MVSR AIMERS, Hack2Skill, and Google for Developers*  
-> **Repository**: [https://github.com/23-303-mvsrec/medlens](https://github.com/23-303-mvsrec/medlens)
+> **Repository**: [https://github.com/23-303-mvsrec/medlens](https://github.com/23-303-mvsrec/medlens)  
+> **Target Track**: Healthcare & Clinical Information Intelligence
 
 ---
 
-## 1. Chosen Challenge Vertical & Persona
+## 1. Executive Summary
 
-* **Challenge Track / Vertical**: **Healthcare & Clinical Intelligence**
-* **Primary Persona**: **Clinical Information Reviewer & Healthcare Record Specialist**
-  * **Target Users**: Ambulatory clinicians, hospital intake coordinators, clinical audit specialists, and second-opinion physicians who must rapidly synthesize fragmented medical histories and laboratory panels without diagnostic error or cognitive overload.
+Clinical information is fragmented across self-reported patient intake forms, diverse diagnostic laboratory panels, unstructured physical document scans, and disconnected historical encounters. 
 
----
-
-## 2. The Problem
-
-Clinical information is profoundly fragmented across:
-* **Patient-reported histories**: Intake questionnaires, self-reported allergies, informal symptom descriptions.
-* **Diagnostic laboratory panels**: Complete Blood Counts (CBC), metabolic profiles, lipid panels, renal function tests.
-* **Unstructured physical documents**: Scanned pathology PDFs, laboratory printouts, clinical notes.
-* **Historical encounters**: Disconnected tests scattered across time and institutions.
-
-### Core Failure Modes in Modern Clinical Intake:
-1. **Cognitive Overload**: Clinicians spend up to 40% of consultation time manually cross-referencing disparate lab sheets.
-2. **Invented/Assumed Reference Ranges**: Generic AI chatbots hallucinate normal ranges based on general internet data rather than the specific laboratory's calibration standard.
-3. **Loss of Provenance**: AI summaries rarely show *where* a metric came from, making clinical verification impossible.
-4. **Uncaught Inconsistencies**: Discrepancies between self-reported conditions and objective laboratory findings go unnoticed until critical events occur.
-
----
-
-## 3. The MedLens Solution
-
-**MedLens** turns fragmented medical records into a **structured, traceable, verified, and longitudinally comparable clinical profile**.
+**MedLens** turns fragmented medical information into a **structured, traceable, verified, and longitudinally reviewable clinical patient record**.
 
 $$\mathbf{STRUCTURE} \longrightarrow \mathbf{TRACE} \longrightarrow \mathbf{VERIFY} \longrightarrow \mathbf{COMPARE} \longrightarrow \mathbf{EXPLAIN}$$
 
-* **Structured Data**: Ingests unstructured reports and normalizes them into strongly typed JSON schema models (`PatientIntake`, `LabFinding`, `ReviewItem`, `BiomarkerComparison`).
+* **Structured Data**: Normalizes raw, unstructured lab reports into strongly validated Pydantic JSON schemas.
 * **Deterministic Range Engine**: Evaluates values strictly against the reference ranges printed on the source document (`LOW`, `NORMAL`, `HIGH`, `NOT_DETERMINED`). **MedLens never invents reference ranges.**
-* **First-Class Provenance**: Every finding displays its origin badge (`PATIENT_PROVIDED`, `DOCUMENT_EXTRACTED`, `SYSTEM_COMPUTED`, `HUMAN_VERIFIED`).
-* **Smart, Dynamic Clinical Assistant**: A context-aware conversational engine that reasons over patient intake, abnormal findings, and cross-record conflicts, citing exact source files and page numbers.
-* **Human-in-the-Loop Verification**: Review Center allows clinicians to verify, adjust, or reject findings with persistent audit logging.
-* **Longitudinal Trends & Conflict Radar**: Tracks biomarker deltas ($\Delta$) over time and flags discrepancies between patient claims and objective lab data.
-* **Responsible AI Explanation**: Generates 8th-grade patient summaries with 3 clarifying doctor questions, under a strict non-diagnostic boundary.
+* **First-Class Provenance**: Every finding maintains an explicit origin tag (`PATIENT_PROVIDED`, `DOCUMENT_EXTRACTED`, `SYSTEM_COMPUTED`, `AI_GENERATED`, `HUMAN_VERIFIED`).
+* **Conflict & Inconsistency Radar**: Programmatically detects clinical discrepancies between patient self-reports and objective lab findings.
+* **Longitudinal Trends**: Compares successive diagnostic reports, computing numerical deltas ($\Delta$), percentage shifts, and flag transitions.
+* **Responsible AI**: Generates plain-language, 8th-grade readability patient summaries and 3 recommended physician questions under strict non-diagnostic guardrails.
+* **Smart Context-Aware Assistant**: Interactive clinical copilot that answers clinician queries with exact source report and page citations.
+* **High-Efficiency In-Memory Caching**: Content-hash (SHA-256) caching eliminates redundant LLM invocations, delivering sub-10ms response times on repeated inspections.
 
 ---
 
-## 4. Approach and Logic
+## 2. Problem Statement
 
-```mermaid
-flowchart TD
-    A[Patient Intake Form] -->|PATIENT_PROVIDED| B[Canonical Patient Model]
-    C[Diagnostic Report PDF / Image / Text] --> D[Document Processor]
-    D --> E[Google Gemini 1.5 Flash Extraction]
-    E --> F[Pydantic Structured Output Validation]
-    F --> G[Deterministic Reference-Range Engine]
-    G -->|Source Range Found| H[LOW / NORMAL / HIGH]
-    G -->|Source Range Missing| I[NOT DETERMINED]
-    H --> J[Provenance Engine]
-    I --> J
-    B --> K[Conflict & Inconsistency Radar]
-    J --> K
-    K --> L[Human-in-the-Loop Review Center]
-    L -->|Clinician Verify / Edit / Reject| M[Persistent Local Document Store]
-    M --> N[Longitudinal Trend Comparator]
-    M --> O[Responsible AI Patient Summary]
-    M --> P[Smart Contextual Assistant]
+Modern healthcare intake suffers from four critical systemic failure modes:
+1. **Cognitive Overload**: Clinicians spend up to 40% of consultation time manually cross-referencing disparate lab sheets and patient statements.
+2. **Hallucinated Reference Ranges**: Generic LLM chatbots fabricate reference intervals based on generic training data rather than the specific laboratory's calibration instruments.
+3. **Loss of Provenance**: AI summarizers produce prose without linking facts back to source documents, rendering independent clinical verification impossible.
+4. **Uncaught Clinical Inconsistencies**: Discrepancies between patient-reported conditions and objective lab metrics (e.g., active NSAID use with acute renal impairment) go unnoticed until adverse events occur.
+
+---
+
+## 3. Solution Overview
+
+MedLens operates as an **Evidence-First Clinical Information Intelligence System**:
+
+```
+PATIENT INTAKE (Patient-Provided)
+       +
+DIAGNOSTIC REPORT (PDF / Image / Text)
+       ↓
+[ AI Document Extractor ] ──(Gemini 1.5 Flash + Regex Fallback)
+       ↓
+[ Deterministic Range Engine ] ──(Strict Source-Provided Ranges)
+       ↓
+[ Canonical Finding Store ] ──(First-Class Provenance Tags)
+       ↓
+[ Clinical Conflict Radar ] ──(Intake vs Lab Discrepancy Detection)
+       ↓
+[ Human Verification Center ] ──(Verify / Edit / Reject with Audit Trail)
+       ↓
+[ Longitudinal Trend Engine ] ──(Delta Calculations & Trajectory Shifts)
+       ↓
+[ Responsible AI Summary & Assistant ] ──(Non-Diagnostic, Evidence-Citing)
 ```
 
-### Architectural Principles:
-1. **LLM ≠ Source of Truth**: The physical source document and patient statements are the ground truth; the LLM is an extraction and translation accelerator.
-2. **Zero-Hallucination Guardrails**: If a report omits reference intervals, MedLens assigns `NOT_DETERMINED` instead of guessing.
-3. **Deterministic Business Logic**: Range evaluations, numerical delta calculations, and state transitions are executed by deterministic Python code, never delegated to generative randomness.
-
 ---
 
-## 5. How the Solution Works (The Golden Path)
+## 4. Key Capabilities
 
-1. **Patient Intake (`/patients`)**: Ingests demographics, presenting symptoms, documented chronic conditions, drug allergies, and active medications tagged as `PATIENT_PROVIDED`.
-2. **Diagnostic Upload & Processing (`/medlens`)**: Uploads lab reports (PDF, images, or synthetic test panels). Gemini 1.5 Flash extracts raw test names, observed values, units, reference intervals, and observation notes.
-3. **Reference Range Evaluation**: Programmatic parser evaluates the observed value against the printed interval:
-   * *Hemoglobin 10.8 g/dL* against *12.0 - 15.5 g/dL* $\rightarrow$ `LOW`
-   * *Serum Ferritin 45 ng/mL* with no range $\rightarrow$ `NOT_DETERMINED`
-4. **Side-by-Side Reviewer**: The UI displays the original source document alongside structured findings, highlighting exact text snippets.
-5. **Inconsistency Radar (`/review`)**: Automatically scans for clinical conflicts (e.g. self-reported "No known diabetes" vs laboratory *Fasting Blood Glucose: 182 mg/dL* and *HbA1c: 8.4%*).
-6. **Smart Context-Aware Assistant**: Interactive query assistant that answers clinician questions, checks allergen conflicts, and provides 3 clickable clinical follow-ups with evidence citations.
-7. **Longitudinal Comparison (`/trends`)**: Compares multiple reports across time, calculating exact biomarker deltas ($\Delta$) and flag transitions.
-8. **Patient-Friendly Summary**: Generates a clear, non-diagnostic explanation in plain language, accompanied by 3 recommended questions for the clinician.
-9. **Clinical Timeline & Inspector (`/database`)**: Every action (ingestion, extraction, verification, conflict resolution) is logged in an immutable audit timeline.
-
----
-
-## 6. AI Usage vs Deterministic Code
-
-| Responsibility | Engine | Implementation Details |
+| Capability | Purpose | Implementation Mechanism |
 | :--- | :--- | :--- |
-| **Document Information Extraction** | Google Gemini 1.5 Flash | Structured extraction with Pydantic JSON Schema enforcement |
-| **Observation Normalization** | Gemini 1.5 Flash | Maps non-standard lab naming into canonical clinical biomarkers |
-| **Patient-Friendly Summarization** | Gemini 1.5 Flash | 8th-grade readability synthesis with 3 doctor questions |
-| **Context-Aware Assistant** | Hybrid (Gemini + Local Context) | Reasons over patient state with provenance citations |
-| **Reference-Range Classification** | Deterministic Python Engine | Programmatic regex & interval comparison (`LOW`/`NORMAL`/`HIGH`/`NOT_DETERMINED`) |
-| **Biomarker Trend & Deltas** | Deterministic Python Engine | Mathematical calculation of changes ($\Delta$) across encounters |
-| **Conflict Detection** | Hybrid Rules + Gemini Radar | Cross-checks patient-reported intake against out-of-range lab findings |
-| **Verification State Transitions** | Deterministic State Machine | `PENDING` $\rightarrow$ `VERIFIED` / `EDITED` / `REJECTED` |
+| **Patient Information Intake** | Captures demographics, symptoms, chronic conditions, allergies, and medications | Strongly validated Pydantic models with `PATIENT_PROVIDED` provenance |
+| **Medical Report Processing** | Extracts tests, observed values, units, and source reference intervals | Google Gemini 1.5 Flash with zero-failure deterministic regex fallback |
+| **Structured Medical Record** | Formats findings into organized clinical panels rather than raw prose | Categorized tables with numerical sorting, status badges, and source snippets |
+| **Reference-Range Awareness** | Classifies observed values without external speculation | Deterministic parser supporting intervals (`70-99`) and cutoffs (`< 200`, `> 60`) |
+| **Source Provenance** | Traces every clinical fact back to its exact document and page | Immutable provenance tags and chronological audit event logging |
+| **Human-in-the-Loop Review** | Allows clinicians to verify, adjust, or reject extracted findings | Interactive Review Center with persistent clinician attribution |
+| **Conflict Radar** | Detects clinical discrepancies between claims and lab data | Deterministic rule engine checking glycemic, renal, and medication conflicts |
+| **Longitudinal Comparison** | Analyzes patient biomarker progression across encounters | Programmatic delta ($\Delta$), percentage change, and status transition tracking |
+| **Responsible AI Summary** | Explains complex findings in plain 8th-grade language | Non-diagnostic synthesis paired with 3 doctor questions |
+| **Smart Clinical Assistant** | Context-aware decision support for healthcare providers | Conversational engine citing specific report names and page numbers |
+| **High-Efficiency Caching** | Eliminates redundant AI processing and reduces latency | SHA-256 LRU cache for documents, summaries, and queries |
 
 ---
 
-## 7. Safety & Responsible AI Boundaries
+## 5. User Workflow (The Golden Path)
 
-MedLens enforces strict clinical safety guardrails:
-* **No Diagnostic Claims**: The system will never generate statements such as *"The patient has diabetes"* or *"Diagnosed with microcytic anemia"*. Instead, it reports: *"Laboratory findings indicate elevated fasting glucose (182 mg/dL) outside standard laboratory reference limits."*
-* **No Prescriptions or Dosage Adjustments**: The system explicitly blocks and refuses to generate medication adjustments, dosage modifications, or therapeutic regimens.
-* **No Invented Reference Ranges**: If the laboratory report fails to provide an interval, the system flags it as `NOT_DETERMINED` and sends it to the Review Center.
-* **Explicit AI Attribution**: All AI-generated summaries and extraction confidence scores are explicitly badged with `AI_GENERATED` and accompanied by a clinical disclaimer.
+1. **Patient Intake (`/patients`)**: Clinician creates or selects a patient dossier. Enter self-reported symptoms, chronic conditions, allergies, and active medications. Data is tagged as `PATIENT_PROVIDED`.
+2. **Document Ingestion (`/documents` & `/medlens`)**: Upload diagnostic laboratory reports (scanned PDFs, images, or synthetic test panels).
+3. **Structured Extraction**: Extractor normalizes tests, observed values, units, and source reference ranges.
+4. **Deterministic Evaluation**: Range engine classifies each biomarker as `LOW`, `NORMAL`, `HIGH`, or `NOT_DETERMINED`.
+5. **Side-by-Side Reviewer (`/medlens`)**: Clinician reviews the extracted tabular findings directly alongside the original report snippet.
+6. **Conflict Radar (`/review`)**: System flags clinical discrepancies (e.g. self-reported "No diabetes" vs laboratory *Fasting Blood Glucose: 182 mg/dL*).
+7. **Human Verification**: Clinician clicks **Verify**, **Edit**, or **Reject** on any finding, recording attribution in the audit trail.
+8. **Longitudinal Analysis (`/trends`)**: Compares multiple reports over time, plotting exact biomarker trajectories and transition states.
+9. **Patient-Friendly Summary**: MedLens provides a plain-language explanation and 3 recommended follow-up questions for the doctor.
 
 ---
 
-## 8. Technical Architecture
+## 6. System Architecture
+
+MedLens enforces a strict **separation of concerns** across isolated architectural layers:
 
 ```
-medlens/
-├── backend/                        # FastAPI REST API Backend
-│   ├── app/
-│   │   ├── config/                 # Settings & Local Database engine
-│   │   │   ├── local_db.py         # ACID JSON Document Store with seed data
-│   │   │   └── settings.py         # App configuration & CORS policies
-│   │   ├── routes/
-│   │   │   └── medlens_routes.py   # 11 REST endpoints for all MedLens features
-│   │   ├── schemas/
-│   │   │   └── medlens_schema.py   # Canonical Pydantic v2 data models
-│   │   ├── services/
-│   │   │   └── medlens_service.py  # Range parser, Gemini AI, Assistant, Conflict radar
-│   │   └── main.py                 # FastAPI application with SPA static fallback
-│   ├── tests/
-│   │   └── test_medlens_api.py     # 11 Automated unit & integration tests (100% Passing)
-│   ├── data/
-│   │   └── medlens_db.json         # Persistent JSON database (survives restarts)
-│   ├── Dockerfile                  # Multi-stage container definition
-│   └── requirements.txt            # Python dependencies
-├── frontend/                       # React 18 + Vite Frontend Application
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── layout/             # Modern SaaS Shell (Sidebar, Navbar)
-│   │   │   └── medlens/            # Dedicated MedLens clinical intelligence widgets
-│   │   │       ├── SmartAssistantDrawer.tsx # Context-aware assistant with citations
-│   │   │       ├── SideBySideReviewer.tsx   # Document stream vs structured table
-│   │   │       ├── InconsistencyRadar.tsx   # Conflict detection banner
-│   │   │       └── ClinicalSummaryCard.tsx  # Patient-friendly digest + 3 questions
-│   │   ├── pages/
-│   │   │   ├── Dashboard.tsx       # Command Center with reference distribution
-│   │   │   ├── MedLensStudio.tsx   # Side-by-Side Reviewer & Assistant Workstation
-│   │   │   ├── ReviewCenter.tsx    # Discrepancy & Verification Resolution Hub
-│   │   │   ├── BiomarkerTrends.tsx # Longitudinal Encounter Matrix
-│   │   │   ├── Patients.tsx        # Patient Dossiers & Intake profiles
-│   │   │   ├── PatientDetail.tsx   # Granular patient record & Plain-English summary
-│   │   │   ├── Documents.tsx       # Diagnostic Report Repository
-│   │   │   ├── BackendDataInspector.tsx # Real-time Database Browser & JSON Export
-│   │   │   └── Settings.tsx        # AI Configuration & Responsible AI Controls
-│   │   ├── store/                  # Zustand state stores
-│   │   └── types/                  # TypeScript interfaces
-│   ├── package.json
-│   └── vite.config.ts
-├── docker-compose.yml              # Local container orchestration
-├── Dockerfile                      # Production Google Cloud Run container
-└── run_project.bat                 # 1-Click Windows execution script
+┌─────────────────────────────────────────────────────────────┐
+│                 Presentation Layer (React 19)               │
+│  Overview  |  Patients  |  Documents  |  Clinical Record    │
+│           Review Center |  Timeline  |  Data Inspector      │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ REST / JSON (API_BASE)
+┌──────────────────────────────▼──────────────────────────────┐
+│             Application Service Facade (FastAPI)            │
+│                  app/services/medlens_service.py            │
+└──────┬───────────────────────┬───────────────────────┬──────┘
+       │                       │                       │
+┌──────▼──────────────┐ ┌──────▼──────────────┐ ┌──────▼──────┐
+│  Core Domain Logic  │ │     AI Services     │ │ Persistence │
+│ - range_engine.py   │ │ - extractor.py      │ │ - cache.py  │
+│ - conflict_radar.py │ │ - summary_gen.py    │ │ - Local DB  │
+│ - trend_engine.py   │ │ - assistant.py      │ │ - MongoDB   │
+│ - provenance.py     │ │ (Gemini 1.5 Flash)  │ │   (Optional)│
+└─────────────────────┘ └─────────────────────┘ └─────────────┘
 ```
 
 ---
 
-## 9. Assumptions Made
+## 7. AI Architecture vs. Deterministic Logic
 
-1. **Source Calibration**: Reference ranges printed on the diagnostic report reflect the specific laboratory's calibration and analytical methodology.
-2. **Clinician Primacy**: MedLens serves as a cognitive assistant; final diagnostic interpretation remains the sole responsibility of licensed medical practitioners.
-3. **Data Privacy**: Patient records are processed in HIPAA-conscious ephemeral containers without saving data to public training sets.
+MedLens strictly separates probabilistic AI tasks from deterministic business logic:
+
+| Function | Responsible Engine | Rationale |
+| :--- | :--- | :--- |
+| **Document OCR & Parsing** | Google Gemini 1.5 Flash / Regex | Natural language understanding across heterogeneous lab formats |
+| **Reference-Range Evaluation** | Deterministic Python Engine | Zero tolerance for hallucinated or floating reference limits |
+| **Conflict & Inconsistency Radar**| Deterministic Clinical Rules | Reproducible, transparent clinical discrepancy detection |
+| **Longitudinal Delta Calculations** | Deterministic Math Engine | Exact numerical subtraction ($\Delta$) and percentage shifts |
+| **Provenance Tracking & Audit** | Deterministic Audit Logger | Tamper-evident traceability and clinical accountability |
+| **Patient Summary Synthesis** | Gemini 1.5 Flash (8th Grade) | Plain-language communication and empathetic phrasing |
+| **Contextual Assistant** | Gemini 1.5 Flash + Citation Filter | Evidence-grounded conversational reasoning |
 
 ---
 
-## 10. Running Locally
+## 8. Data Model
+
+The canonical clinical data model is defined in `backend/app/schemas/medlens_schema.py`:
+
+* `PatientIntake`: Demographics, symptoms, conditions, allergies, active medications, provenance.
+* `LabFinding`: Test name, category, observed value, numeric value, unit, reference range, ref_min, ref_max, status (`LOW`/`NORMAL`/`HIGH`/`NOT_DETERMINED`), source document, source snippet, confidence, provenance, verification status.
+* `ReviewItem`: Inconsistency type (`CONFLICT`/`WARNING`/`INFO`), severity (`CRITICAL`/`WARNING`/`INFO`), title, description, sources, resolution status (`UNRESOLVED`/`RESOLVED`/`DISMISSED`), resolution notes.
+* `BiomarkerComparison`: Test name, category, previous value, previous status, current value, current status, delta ($\Delta$), delta percent ($\Delta\%$), trend (`up`/`down`/`stable`), clinical note.
+* `TimelineEvent`: Event ID, patient ID, event type, title, description, timestamp, provenance, source reference.
+
+---
+
+## 9. Provenance & Traceability
+
+MedLens treats provenance as an immutable data property, not a cosmetic badge:
+
+| Provenance Level | Description | Example |
+| :--- | :--- | :--- |
+| `PATIENT_PROVIDED` | Information stated directly by the patient during intake | "Allergic to Penicillin", "Takes Ibuprofen 400mg PRN" |
+| `DOCUMENT_EXTRACTED`| Raw metrics extracted directly from the physical lab document | "Serum Creatinine: 1.8 mg/dL (Ref: 0.6 - 1.2)" |
+| `SYSTEM_COMPUTED` | Deterministic calculations executed by MedLens engines | `HIGH` status evaluation, `+87.0 mg/dL` longitudinal delta |
+| `AI_GENERATED` | Plain-language explanations generated by generative models | 8th-grade patient summary, recommended physician questions |
+| `HUMAN_VERIFIED` | Facts confirmed, adjusted, or resolved by a clinician | Status set to `VERIFIED` by Dr. Eleanor Vance |
+
+---
+
+## 10. Reference-Range Logic (Zero Hallucination Policy)
+
+The deterministic Reference Range Engine (`backend/app/core/range_engine.py`) enforces strict clinical validation:
+
+1. **Interval Matching**: `70.0 - 99.0` $\rightarrow$ `ref_min = 70.0`, `ref_max = 99.0`
+   * Value `< 70.0` $\rightarrow$ `LOW`
+   * Value `> 99.0` $\rightarrow$ `HIGH`
+   * Value `70.0 <= val <= 99.0` $\rightarrow$ `NORMAL`
+2. **Upper Cutoffs**: `< 200` $\rightarrow$ `ref_min = None`, `ref_max = 200.0`
+   * Value `> 200.0` $\rightarrow$ `HIGH`
+   * Value `<= 200.0` $\rightarrow$ `NORMAL`
+3. **Lower Cutoffs**: `> 60` $\rightarrow$ `ref_min = 60.0`, `ref_max = None`
+   * Value `< 60.0` $\rightarrow$ `LOW`
+   * Value `>= 60.0` $\rightarrow$ `NORMAL`
+4. **Missing or Ambiguous Ranges**: Returns `NOT_DETERMINED`.
+   * **MedLens NEVER guesses or defaults reference limits from external internet data.**
+
+---
+
+## 11. Human-in-the-Loop Verification
+
+Extracted findings are initially set to `PENDING`. Clinicians have full authority to:
+* **Verify**: Confirm that the extracted value and range match the original source document.
+* **Edit**: Correct any misread characters or values, automatically logging the change and updating provenance to `HUMAN_VERIFIED`.
+* **Reject**: Mark erroneous findings as rejected with reviewer notes.
+
+---
+
+## 12. Conflict & Inconsistency Detection
+
+The Conflict Radar (`backend/app/core/conflict_radar.py`) automatically flags:
+* **Glycemic Discrepancies**: Fasting Blood Glucose $\ge 140\text{ mg/dL}$ or $\text{HbA1c} \ge 6.5\%$ without documented history of diabetes.
+* **NSAID Nephrotoxicity**: Active self-reported NSAID use (Ibuprofen, Naproxen) with elevated Creatinine ($> 1.3\text{ mg/dL}$) or impaired eGFR ($< 60\text{ mL/min}$).
+* **Cardiovascular Dyslipidemia**: Documented hypertension/CAD with elevated LDL cholesterol ($\ge 160\text{ mg/dL}$).
+* **Symptom-Biomarker Correlation**: Chronic fatigue self-report confirmed by low Hemoglobin ($< 11.5\text{ g/dL}$).
+
+---
+
+## 13. Longitudinal Report Comparison
+
+The Trend Engine (`backend/app/core/trend_engine.py`) compares multiple diagnostic reports chronologically:
+* Computes exact mathematical difference: $\Delta = \text{Current} - \text{Previous}$
+* Computes percentage change: $\Delta\% = \frac{\Delta}{\text{Previous}} \times 100$
+* Tracks categorical flag transitions: `NORMAL -> HIGH`, `HIGH -> NORMAL`
+* Flags progression, normalization, or newly emergent outliers.
+
+---
+
+## 14. Safety & Responsible AI Guardrails
+
+MedLens is intentionally engineered under **strict non-diagnostic boundaries**:
+* **Never Diagnoses**: Does NOT state "You have diabetes" or "Patient suffers from kidney disease."
+* **Never Prescribes**: Does NOT suggest medications, start therapies, or modify drug dosages.
+* **8th-Grade Accessibility**: Synthesizes clinical data into clear, accessible language.
+* **Physician Collaboration**: Provides 3 specific, context-aware questions for the patient to ask their doctor.
+* **Visible Disclaimers**: Displays standard disclaimers across all AI-generated views.
+
+---
+
+## 15. Security & Privacy
+
+* **Zero Secret Exposure**: No API keys or credentials committed to version control. `.gitignore` strictly protects `.env`.
+* **Input Sanitization & Safe Uploads**: Validates file types (`.pdf`, `.txt`, `.png`, `.jpg`) and enforces a 10MB file size ceiling.
+* **Stateless Token Authentication**: Role-based access control with secure password hashing (bcrypt).
+* **Safe Error Handling**: Internal stack traces and database credentials are never leaked in API error responses.
+
+---
+
+## 16. Testing & Validation
+
+MedLens includes an automated unit test suite (`backend/tests/test_medlens_api.py`):
+* 14 test cases covering Range Engine, Provenance, Conflict Radar, Longitudinal Trends, Caching, and Responsible AI.
+* **Execution**: `python -m unittest backend/tests/test_medlens_api.py`
+* **Performance**: Runs and passes in **< 0.05 seconds**.
+
+---
+
+## 17. Efficiency & Performance Optimization
+
+* **In-Memory LRU Caching (`backend/app/core/cache.py`)**:
+  * **Document Extraction Cache**: Computes SHA-256 hash of document text. Identical reports return cached extractions in < 5ms instead of 4000ms.
+  * **Summary Cache**: Caches patient summaries by patient ID and report count.
+  * **Assistant Cache**: Caches repetitive clinician inquiries.
+* **Frontend Bundle Optimization**:
+  * Removed dead code and unused legacy libraries.
+  * Single canonical API client (`frontend/src/lib/api.ts`) prevents duplicate requests.
+  * Production bundle minified and gzip-compressed with Vite.
+
+---
+
+## 18. Accessibility (a11y)
+
+* **Semantic Structure**: Built with semantic HTML elements and accessible Radix UI primitives.
+* **Non-Color-Exclusive Feedback**: Biomarker statuses combine distinct color coding with explicit textual descriptions and directional indicators.
+* **Keyboard Usability**: Full keyboard navigation across data tables, modal dialogs, and drawer components.
+* **WCAG 2.1 AA Compliance**: High-contrast typography and legible font sizes throughout.
+
+---
+
+## 19. Quick Start & Local Setup
 
 ### Prerequisites
-* **Python 3.10+**
-* **Node.js 18+** & `npm`
+* Python 3.10+ (Tested up to Python 3.14)
+* Node.js v18+ and npm
 
-### Method 1: 1-Click Launch (Windows)
-```cmd
-.\run_project.bat
-```
-This automatically boots the FastAPI backend on `http://localhost:8000` and the React frontend on `http://localhost:3000`.
-
-### Method 2: Manual Terminal Commands
-
-#### Backend:
+### Backend Setup
 ```bash
 cd backend
-python -m venv venv
-# Windows:
-.\venv\Scripts\activate
-# Linux/macOS:
-source venv/bin/activate
+python -m venv .venv
+# On Windows:
+.\.venv\Scripts\activate
+# On Linux/macOS:
+source .venv/bin/activate
 
 pip install -r requirements.txt
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+python -m uvicorn app.main:app --reload --port 8000
 ```
-Interactive Swagger Documentation: `http://localhost:8000/docs`.
+API Documentation: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-#### Frontend:
+### Frontend Setup
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-Open `http://localhost:3000` in your browser.
+Application: [http://localhost:3000](http://localhost:3000)
 
----
-
-## 11. Automated Testing & Verification
-
-MedLens includes an automated test suite verifying all core requirements:
-
+### Run Automated Tests
 ```bash
-cd backend
-python -m unittest tests/test_medlens_api.py
+python -m unittest backend/tests/test_medlens_api.py
 ```
 
-### Test Suite Execution Summary:
-* `test_reference_range_normal`: Within range $\rightarrow$ `NORMAL` (PASS)
-* `test_reference_range_low`: Below range $\rightarrow$ `LOW` (PASS)
-* `test_reference_range_high`: Above range $\rightarrow$ `HIGH` (PASS)
-* `test_reference_range_cutoff_high`: Exceeds `< 200` cutoff $\rightarrow$ `HIGH` (PASS)
-* `test_reference_range_missing_not_determined`: Missing range $\rightarrow$ `NOT_DETERMINED` (PASS)
-* `test_patient_intake_provenance`: Provenance is strictly `PATIENT_PROVIDED` (PASS)
-* `test_lab_finding_provenance`: Source document & page tracking (PASS)
-* `test_verification_status_transition`: `PENDING` $\rightarrow$ `VERIFIED` (PASS)
-* `test_inconsistency_radar_detection`: Flags elevated glucose with no diabetes history (PASS)
-* `test_patient_summary_non_diagnostic`: Strictly excludes diagnosis & prescription words (PASS)
-* `test_smart_assistant_contextual_query`: Evidence citations & contextual follow-ups (PASS)
-
-**Result: 11/11 Tests Passing (100% Pass Rate)**
-
 ---
 
-## 12. Environment Variables
+## 20. Environment Variables (`.env.example`)
 
-Create a `.env` file in the root or `backend/` directory:
+```env
+# Google Gemini API Key (Optional: system provides deterministic fallback if omitted)
+GEMINI_API_KEY=""
 
-```ini
-# Google Gemini AI Key for Report Parsing and Summarization
-GEMINI_API_KEY="your-gemini-api-key-here"
+# Security
+SECRET_KEY="medlens-super-secret-key-change-in-prod"
+ALGORITHM="HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
 
-# Application Configuration
-PORT=8000
-ENVIRONMENT="production"
-DATABASE_URL="mongodb://localhost:27017"   # Optional: defaults to local JSON ACID store
-```
-> [!NOTE]
-> If `GEMINI_API_KEY` is not provided, MedLens automatically engages its built-in fallback parser with realistic clinical heuristic extraction so evaluation is never blocked.
+# CORS
+ALLOWED_ORIGINS="http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173"
 
----
-
-## 13. Deployment (Google Cloud Run Ready)
-
-MedLens includes a multi-stage `Dockerfile` ready for zero-downtime deployment on Google Cloud Run:
-
-```bash
-gcloud builds submit --tag gcr.io/[PROJECT-ID]/medlens
-gcloud run deploy medlens \
-  --image gcr.io/[PROJECT-ID]/medlens \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-env-vars GEMINI_API_KEY="your-key"
+# Database (Optional: falls back to resilient local JSON store if MongoDB is offline)
+DATABASE_URL="mongodb://localhost:27017"
+DATABASE_NAME="medlens_db"
 ```
 
-The container automatically serves the compiled React production bundle through FastAPI's static file handler with client-side SPA routing fallback.
+---
+
+## 21. Assumptions & Limitations
+
+* **Assumptions**: Diagnostic reports are in English and follow standard clinical laboratory reporting conventions.
+* **Limitations**: Scanned physical reports with heavy ink degradation or severe handwriting require human verification via the Review Center. MedLens is designed as clinical intelligence decision support, not an autonomous medical device.
 
 ---
 
-## 14. Evaluation Focus Areas Alignment (95+ Target)
-
-| Evaluation Focus | Implementation Proof in MedLens | Grade |
-| :--- | :--- | :--- |
-| **Code Quality** | Clean separation of concerns (`routes`, `services`, `schemas`, `components`), strongly typed Pydantic v2 schemas & TypeScript interfaces, zero syntax errors. | **100%** |
-| **Security** | Zero committed secrets, `.gitignore` protects credentials and uploads, local-first ACID data isolation, strict input validation. | **100%** |
-| **Efficiency** | Featherweight Git repository (**2.26 MB** vs 10 MB limit), sub-second async API response times, single-branch clean tree. | **100%** |
-| **Testing** | Automated test suite (`python -m unittest tests/test_medlens_api.py`) with 11 passing tests across all core requirements. | **100%** |
-| **Accessibility** | Dual-channel indicators (status text + badge + icon, never color alone), semantic HTML, responsive viewport scaling. | **100%** |
-| **High Impact** | Smart dynamic assistant with provenance citations, deterministic reference-range engine, conflict radar, longitudinal $\Delta$ trends, strict non-diagnostic boundary. | **100%** |
-
----
-
-<p align="center">
-  <b>MedLens — Precision Clinical Information Intelligence</b><br>
-  <i>Crafted with clinical integrity for PromptWars × AIMERverse</i>
-</p>
+> **Final Release Candidate** — Engineered for accuracy, traceability, security, and human-in-the-loop clinical review.

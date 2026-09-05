@@ -1,3 +1,4 @@
+﻿import { API_BASE } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -56,7 +57,7 @@ const Documents = () => {
     setIsLoading(true);
     try {
       // 1. Fetch Patients
-      const patRes = await fetch('http://127.0.0.1:8000/api/medlens/patients');
+      const patRes = await fetch(`${API_BASE}/medlens/patients`);
       let patientList: any[] = [];
       if (patRes.ok) {
         patientList = await patRes.json();
@@ -242,7 +243,7 @@ const Documents = () => {
                         <span className="text-[11px] font-mono text-slate-500">
                           {report.file_name}
                         </span>
-                        <span className="text-slate-300">•</span>
+                        <span className="text-slate-300">â€¢</span>
                         <span className="text-[11px] text-slate-500 flex items-center gap-1">
                           <Calendar className="w-3 h-3 text-slate-400" />
                           {report.report_date}
@@ -256,7 +257,7 @@ const Documents = () => {
                         <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
                           <Building2 className="w-3.5 h-3.5 text-slate-400" />
                           <span>{report.laboratory_name || 'Quest Diagnostics / LalPathLabs'}</span>
-                          <span>•</span>
+                          <span>â€¢</span>
                           <User className="w-3.5 h-3.5 text-slate-400" />
                           <span 
                             onClick={() => navigate(`/patients/${report.patient_id}`)}

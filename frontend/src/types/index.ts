@@ -1,6 +1,5 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
+﻿/**
+ * MedLens Clinical Information Intelligence Types
  */
 
 export type UserRole = 'Admin' | 'Doctor';
@@ -12,52 +11,6 @@ export interface User {
   role: UserRole;
   avatar?: string;
   specialization?: string;
-}
-
-export interface Department {
-  id: string;
-  name: string;
-  code: string;
-  floor: string;
-  hodId: string;
-  hodName: string;
-  totalBeds: number;
-  availableBeds: number;
-  icuSlots: number;
-}
-
-export interface DepartmentInfo {
-  id: string;
-  name: string;
-  is_primary: boolean;
-}
-
-export interface Doctor {
-  id: string;
-  name: string;
-  email: string;
-  password?: string;
-  specialization: string;
-  sub_specialization?: string;
-  qualifications: string[];
-  experience_years: number;
-  registration_number: string;
-  consultation_fee: number;
-  followup_fee: number;
-  departments: DepartmentInfo[];
-  created_at: string;
-  status?: 'Available' | 'On Break' | 'Busy' | 'Offline';
-  availability?: AvailabilitySlot[];
-}
-
-export interface AvailabilitySlot {
-  id: string;
-  doctor_id: string;
-  day_of_week: string;
-  start_time: string;
-  end_time: string;
-  consultation_duration: number;
-  is_leave: boolean;
 }
 
 export interface Patient {
@@ -73,7 +26,7 @@ export interface Patient {
   emergencyContact: string;
   insuranceInfo: string;
   status: 'Stable' | 'Critical' | 'Discharged' | 'In Treatment';
-  assignedDoctorId: string;
+  assignedDoctorId?: string;
 }
 
 export interface Document {
@@ -82,28 +35,21 @@ export interface Document {
   type: string;
   fileName: string;
   fileUrl: string;
-  
-  // New structured fields
   scanDate?: string;
   bodyPart?: string;
   department?: string;
-  referringDoctorId?: string;
-  
   findings?: string;
   impression?: string;
-  
   symptoms?: string;
   clinicalHistory?: string;
   reasonForScan?: string;
   doctorNotes?: string;
-  
-  notes: string; // Legacy
+  notes?: string;
   uploadDate: string;
   patientName?: string;
   patientMrn?: string;
   uploadedBy?: string;
 }
-
 
 export interface Note {
   id: string;
@@ -119,8 +65,8 @@ export interface MedicationItem {
   name: string;
   dosage: string;
   frequency: string;
-  duration: string;
-  instructions: string;
+  duration?: string;
+  instructions?: string;
 }
 
 export interface Prescription {
@@ -129,7 +75,7 @@ export interface Prescription {
   doctor_id: string;
   clinical_notes: string;
   medications: MedicationItem[];
-  additional_notes: string;
+  additional_notes?: string;
   created_at: string;
 }
 
@@ -149,21 +95,15 @@ export interface DocumentStudy {
   bodyPart?: string;
   scanDate?: string;
   department?: string;
-  referringDoctorId?: string;
-  
   findings?: string;
   impression?: string;
-  
   symptoms?: string;
   clinicalHistory?: string;
   reasonForScan?: string;
   doctorNotes?: string;
-  
   uploadedBy: string;
   createdAt: string;
   files: StudyFile[];
-  
-  // For repository table
   patientName?: string;
   mrn?: string;
   appId?: string;

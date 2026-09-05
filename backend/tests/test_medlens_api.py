@@ -1,6 +1,6 @@
-"""
-MedLens — Comprehensive Clinical Intelligence Test Suite
-PromptWars × AIMERverse Hackathon Edition
+﻿"""
+MedLens â€” Comprehensive Clinical Intelligence Test Suite
+PromptWars Ã— AIMERverse Hackathon Edition
 Verifies core requirements: Intake, Extraction, Deterministic Reference-Range Engine,
 Provenance, Human Verification, Conflict Radar, Longitudinal Trends, and Responsible AI.
 """
@@ -223,6 +223,66 @@ class TestMedLensClinicalIntelligence(unittest.TestCase):
         self.assertIn("suggested_followups", res)
         self.assertGreaterEqual(len(res["suggested_followups"]), 1)
 
+
+    # -------------------------------------------------------------------------
+    # 7. HIGH-EFFICIENCY DETERMINISTIC CACHING (EFFICIENCY CRITERION)
+    # -------------------------------------------------------------------------
+    def test_efficiency_document_caching(self):
+        """Identical document text must return cached extraction without redundant processing."""
+        from app.core.cache import document_cache
+        from app.ai.document_extractor import document_extractor
+        
+        sample_text = "Fasting Blood Glucose: 110 mg/dL (Ref: 70.0 - 99.0)\nSerum Creatinine: 0.9 mg/dL (Ref: 0.6 - 1.2)"
+        # First extraction (populate cache)
+        first_pass = document_extractor.extract_findings(sample_text, "P-TEST-CACHE", "REP-01")
+        self.assertGreaterEqual(len(first_pass), 2)
+        
+        # Second extraction (should hit cache)
+        initial_hits = document_cache.hits
+        second_pass = document_extractor.extract_findings(sample_text, "P-TEST-CACHE", "REP-02")
+        self.assertGreater(document_cache.hits, initial_hits)
+        self.assertEqual(len(second_pass), len(first_pass))
+
+    # -------------------------------------------------------------------------
+    # 8. DRUG-BIOMARKER CONFLICT RADAR (PROBLEM ALIGNMENT)
+    # -------------------------------------------------------------------------
+    def test_nsaid_nephrotoxicity_radar(self):
+        """Conflict radar must flag active NSAID intake combined with elevated Creatinine."""
+        from app.core.conflict_radar import conflict_radar
+        from app.schemas.medlens_schema import MedicationItem
+        
+        intake = PatientIntake(
+            patient_id="P-TEST-NSAID",
+            full_name="Sarah Connor",
+            age=52,
+            gender="Female",
+            symptoms=["Back pain"],
+            chronic_conditions=[],
+            allergies=[],
+            current_medications=[MedicationItem(name="Ibuprofen 400mg", dosage="400mg")]
+        )
+        findings = [
+            {"test_name": "Serum Creatinine", "value": "1.8", "numeric_value": 1.8, "unit": "mg/dL", "reference_range": "0.6 - 1.2"}
+        ]
+        items = conflict_radar.detect_conflicts(intake, findings)
+        self.assertTrue(any("NSAID" in i.title for i in items))
+        self.assertEqual(items[0].severity, "CRITICAL")
+
+    # -------------------------------------------------------------------------
+    # 9. LONGITUDINAL BIOMARKER TRENDS (LONGITUDINAL COMPARISON)
+    # -------------------------------------------------------------------------
+    def test_longitudinal_trend_delta_computation(self):
+        """Trend engine must calculate accurate numerical delta and status transitions."""
+        from app.core.trend_engine import trend_engine
+        
+        prev = [{"test_name": "Fasting Blood Glucose", "value": "95", "numeric_value": 95.0, "status": "NORMAL", "unit": "mg/dL", "reference_range": "70 - 99"}]
+        curr = [{"test_name": "Fasting Blood Glucose", "value": "182", "numeric_value": 182.0, "status": "HIGH", "unit": "mg/dL", "reference_range": "70 - 99"}]
+        
+        trends = trend_engine.compare_reports(curr, prev, "2026-09-05", "2026-03-01")
+        self.assertEqual(len(trends), 1)
+        self.assertEqual(trends[0].delta, 87.0)
+        self.assertEqual(trends[0].trend, "up")
+        self.assertIn("NORMAL -> HIGH", trends[0].note)
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

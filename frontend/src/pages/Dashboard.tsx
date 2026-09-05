@@ -1,3 +1,4 @@
+﻿import { API_BASE } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -63,21 +64,21 @@ const Dashboard = () => {
     setIsLoading(true);
     try {
       // 1. Fetch real stats
-      const statsRes = await fetch('http://127.0.0.1:8000/api/medlens/dashboard/stats');
+      const statsRes = await fetch(`${API_BASE}/medlens/dashboard/stats`);
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData);
       }
 
       // 2. Fetch pending review items
-      const reviewRes = await fetch('http://127.0.0.1:8000/api/medlens/review-items');
+      const reviewRes = await fetch(`${API_BASE}/medlens/review-items`);
       if (reviewRes.ok) {
         const items = await reviewRes.json();
         setReviewItems(items);
       }
 
       // 3. Fetch patients
-      const patRes = await fetch('http://127.0.0.1:8000/api/medlens/patients');
+      const patRes = await fetch(`${API_BASE}/medlens/patients`);
       if (patRes.ok) {
         const patData = await patRes.json();
         setPatients(patData);
@@ -342,7 +343,7 @@ const Dashboard = () => {
                 <ShieldAlert className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
                 <div className="leading-relaxed">
                   <span className="font-bold">Zero-Hallucination Policy: </span>
-                  MedLens strictly parses the printed intervals (e.g. 70–99 mg/dL or &lt; 200 mg/dL) from the original report. 
+                  MedLens strictly parses the printed intervals (e.g. 70â€“99 mg/dL or &lt; 200 mg/dL) from the original report. 
                   When a report omits reference intervals, MedLens labels it <span className="font-semibold text-slate-700">NOT_DETERMINED</span> rather than generating arbitrary cutoffs.
                 </div>
               </div>
@@ -496,7 +497,7 @@ const Dashboard = () => {
                     <div>
                       <h4 className="font-bold text-xs text-slate-900">{pat.full_name}</h4>
                       <p className="text-[11px] text-slate-500 mt-0.5">
-                        {pat.age}y • {pat.gender} • ID: <span className="font-mono">{pat.patient_id}</span>
+                        {pat.age}y â€¢ {pat.gender} â€¢ ID: <span className="font-mono">{pat.patient_id}</span>
                       </p>
                       {pat.allergies && pat.allergies.length > 0 && (
                         <div className="mt-1 flex items-center gap-1">

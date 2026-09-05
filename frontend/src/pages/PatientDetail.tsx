@@ -1,3 +1,4 @@
+﻿import { API_BASE } from '@/lib/api';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -182,11 +183,11 @@ const PatientDetail = () => {
 
               <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300">
                 <span><strong className="text-white">Age:</strong> {patient?.age || 58} years</span>
-                <span>•</span>
+                <span>â€¢</span>
                 <span><strong className="text-white">Gender:</strong> {patient?.gender || 'Female'}</span>
-                <span>•</span>
+                <span>â€¢</span>
                 <span><strong className="text-white">Intake Date:</strong> {patient?.intake_date || '2026-09-05'}</span>
-                <span>•</span>
+                <span>â€¢</span>
                 <span><strong className="text-white">Reports Ingested:</strong> {reports.length}</span>
               </div>
             </div>
@@ -317,7 +318,7 @@ const PatientDetail = () => {
                       <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 flex items-center justify-between text-xs">
                         <div>
                           <p className="font-bold text-slate-900">{med.name} ({med.dosage})</p>
-                          <p className="text-[11px] text-slate-500 mt-0.5">{med.frequency || 'Daily'} • Source: {med.source || 'Patient'}</p>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{med.frequency || 'Daily'} â€¢ Source: {med.source || 'Patient'}</p>
                         </div>
                         <Pill className="w-4 h-4 text-indigo-500" />
                       </div>

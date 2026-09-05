@@ -1,3 +1,4 @@
+﻿import { API_BASE } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -66,7 +67,7 @@ const BiomarkerTrends = () => {
 
   const fetchPatientsList = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/medlens/patients');
+      const res = await fetch(`${API_BASE}/medlens/patients`);
       if (res.ok) {
         const data = await res.json();
         setPatients(data);
@@ -196,7 +197,7 @@ const BiomarkerTrends = () => {
             <div>
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Patient Dossier</p>
               <p className="text-base font-bold text-slate-900 mt-1">{activePatient.full_name}</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">{activePatient.age}y • {activePatient.gender} • ID: {activePatient.patient_id}</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">{activePatient.age}y â€¢ {activePatient.gender} â€¢ ID: {activePatient.patient_id}</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
               <User className="w-5 h-5" />

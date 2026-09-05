@@ -1,3 +1,4 @@
+﻿import { API_BASE } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -71,7 +72,7 @@ const ReviewCenter = () => {
   const fetchReviewItems = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/medlens/review-items');
+      const res = await fetch(`${API_BASE}/medlens/review-items`);
       if (res.ok) {
         const data = await res.json();
         setItems(data);

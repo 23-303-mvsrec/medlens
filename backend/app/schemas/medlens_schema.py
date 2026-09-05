@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+﻿from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
@@ -34,8 +34,8 @@ class PatientIntake(BaseModel):
     patient_id: Optional[str] = None
     mrn: Optional[str] = None
     full_name: str
-    age: int
-    gender: str
+    age: Optional[int] = None
+    gender: str = 'Unknown'
     dob: Optional[str] = None
     symptoms: List[str] = Field(default_factory=list)
     chronic_conditions: List[str] = Field(default_factory=list)

@@ -1,10 +1,10 @@
-from fastapi import FastAPI
+﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import os
 from .config.db import connect_to_mongo, close_mongo_connection
 from .config.settings import settings
-from .routes import auth_routes, department_routes, doctor_routes, patient_routes, document_routes, stats_routes, notes_routes, doctor_dashboard_routes, prescription_routes, medlens_routes
+from .routes import auth_routes, patient_routes, document_routes, medlens_routes
 
 app = FastAPI(title="MedLens Clinical Information Intelligence API", version="2.0.0")
 
@@ -43,15 +43,9 @@ from fastapi import HTTPException
 
 # Include Routes
 app.include_router(auth_routes.router, prefix="/api")
-app.include_router(department_routes.router, prefix="/api")
-app.include_router(doctor_routes.router, prefix="/api")
+app.include_router(medlens_routes.router, prefix="/api")
 app.include_router(patient_routes.router, prefix="/api")
 app.include_router(document_routes.router, prefix="/api")
-app.include_router(stats_routes.router, prefix="/api")
-app.include_router(notes_routes.router, prefix="/api")
-app.include_router(prescription_routes.router, prefix="/api")
-app.include_router(doctor_dashboard_routes.router, prefix="/api")
-app.include_router(medlens_routes.router, prefix="/api")
 
 # Serve Frontend if dist exists (Production / Cloud Run unified container)
 frontend_dist = os.path.join(os.path.dirname(BASE_DIR), "frontend", "dist")

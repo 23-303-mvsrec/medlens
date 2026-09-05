@@ -1,3 +1,4 @@
+﻿import { toast } from 'sonner';
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { Sparkles,
@@ -25,16 +26,29 @@ const Sidebar = () => {
 
   const menuItems = [
     { 
-      name: 'Command Center', 
+      name: 'Overview', 
       icon: LayoutDashboard, 
       path: '/dashboard', 
       roles: ['Admin', 'Doctor'] 
     },
     { 
-      name: 'MedLens Studio', 
+      name: 'Patients', 
+      icon: Users, 
+      path: '/patients', 
+      badge: 'Intake',
+      roles: ['Admin', 'Doctor'] 
+    },
+    { 
+      name: 'Documents', 
+      icon: Files, 
+      path: '/documents', 
+      roles: ['Admin', 'Doctor'] 
+    },
+    { 
+      name: 'Clinical Record', 
       icon: Sparkles, 
       path: '/medlens', 
-      badge: 'AI Core',
+      badge: 'Structured',
       roles: ['Admin', 'Doctor'] 
     },
     { 
@@ -45,44 +59,31 @@ const Sidebar = () => {
       roles: ['Admin', 'Doctor'] 
     },
     { 
-      name: 'Biomarker Trends', 
+      name: 'Timeline', 
       icon: TrendingUp, 
       path: '/trends', 
+      badge: 'Delta',
       roles: ['Admin', 'Doctor'] 
     },
     { 
-      name: 'Patient Dossiers', 
-      icon: Users, 
-      path: '/patients', 
-      roles: ['Admin', 'Doctor'] 
-    },
-    { 
-      name: 'Medical Reports', 
-      icon: Files, 
-      path: '/documents', 
-      roles: ['Admin', 'Doctor'] 
-    },
-    { 
-      name: 'Live Data Inspector', 
+      name: 'Data Inspector', 
       icon: Database, 
       path: '/database', 
-      badge: 'Live DB',
       roles: ['Admin', 'Doctor'] 
     },
     { 
-      name: 'Settings & Policy', 
+      name: 'Settings', 
       icon: Settings, 
       path: '/settings', 
       roles: ['Admin', 'Doctor'] 
     },
-    
   ];
 
   const filteredItems = menuItems.filter(item => !role || item.roles.includes(role));
 
   const handleLogout = () => {
     logout();
-    import('sonner').then(({ toast }) => toast.success('Logged out successfully'));
+    toast.success('Logged out successfully');
     navigate('/login');
   };
 
