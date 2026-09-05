@@ -1,0 +1,27 @@
+METROHEALTH CLINICAL PATHOLOGY LABORATORY
+Accreditation: CAP / CLIA Certified #45D09821
+100 Central Parkway, Suite 400
+
+PATIENT DEMOGRAPHIC & ENCOUNTER RECORD
+Patient Name: Arthur Pendelton
+Patient ID / MRN: P-204
+Age: 54   |   Sex: Male   |   DOB: 1972-04-12
+Collection Date: 2026-03-15 08:30 AM
+Physician: Dr. Robert Vance, MD
+Panel: Routine Baseline Metabolic & Hematology Panel
+
+========================================================================================
+TEST MARKER                     RESULT    UNITS        REFERENCE INTERVAL    STATUS
+========================================================================================
+Fasting Blood Glucose           94.0      mg/dL        70.0 - 99.0           NORMAL
+Hemoglobin (Hb)                 13.8      g/dL         13.0 - 17.0           NORMAL
+Red Blood Cell Count (RBC)      4.85      million/uL   4.30 - 5.90           NORMAL
+White Blood Cell Count (WBC)    6.4       10^3/uL      4.5 - 11.0            NORMAL
+Platelet Count                  250       10^3/uL      150 - 450             NORMAL
+Serum Creatinine                0.95      mg/dL        0.70 - 1.20           NORMAL
+Blood Urea Nitrogen (BUN)       14.0      mg/dL        7.0 - 20.0            NORMAL
+Total Cholesterol               188       mg/dL        < 200                 NORMAL
+========================================================================================
+CLINICAL PATHOLOGIST OBSERVATION:
+All hematological and metabolic parameters within standard physiological bounds for age and sex.
+Reviewing Pathologist: Dr. H. Patel, FACP

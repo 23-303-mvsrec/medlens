@@ -1,0 +1,28 @@
+REGIONAL REFERENCE PATHOLOGY SERVICES
+Department of Clinical Biochemistry & Renal Monitoring
+750 University Avenue, Clinical Tower B
+
+FOLLOW-UP BIOCHEMICAL MONITORING REPORT
+Patient Name: Arthur Pendelton
+Patient ID / MRN: P-204
+Age: 54   |   Sex: Male   |   DOB: 1972-04-12
+Collection Date: 2026-11-10 08:00 AM
+Encounter Reason: Follow-up evaluation after lifestyle & hydration guidance
+Ordering Clinician: Dr. Sarah Lin, MD
+
+========================================================================================
+TEST MARKER                     RESULT    UNITS        REFERENCE INTERVAL    METHOD
+========================================================================================
+Fasting Blood Glucose           138.0     mg/dL        70.0 - 99.0           Hexokinase
+Serum Creatinine                1.25      mg/dL        0.70 - 1.20           Enzymatic IDMS
+Blood Urea Nitrogen (BUN)       19.0      mg/dL        7.0 - 20.0            Urease
+Total Cholesterol               208       mg/dL        < 200                 Spectrophotometry
+Triglycerides                   172       mg/dL        < 150                 GPO-PAP
+HDL Cholesterol                 44        mg/dL        > 40                  Direct Clearance
+LDL Cholesterol                 130       mg/dL        < 100                 Calculated
+Potassium (Serum)               4.3       mmol/L       3.5 - 5.1             ISE
+Sodium (Serum)                  140       mmol/L       135 - 145             ISE
+========================================================================================
+CLINICAL NOTES:
+Follow-up shows partial improvement in fasting glycemic index and stabilizing serum creatinine.
+Reviewing Pathologist: Dr. K. Arisawa, PhD, FACB

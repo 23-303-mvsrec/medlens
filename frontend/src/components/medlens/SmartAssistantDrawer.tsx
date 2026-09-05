@@ -54,7 +54,8 @@ export const SmartAssistantDrawer: React.FC<Props> = ({ patientId, patientName =
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:8000/api/medlens/assistant/query', {
+      const apiBase = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' ? '/api' : 'http://localhost:8000/api');
+      const res = await fetch(`${apiBase}/medlens/assistant/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ patient_id: patientId, query: userQuery })

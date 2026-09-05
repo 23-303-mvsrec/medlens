@@ -1,0 +1,30 @@
+ST. JUDE CLINICAL DIAGNOSTIC CENTER
+Accreditation: CAP / ISO 15189 Certified
+500 Medical Center Blvd, Diagnostic Wing
+
+DIAGNOSTIC LABORATORY EXAMINATION
+Patient Name: Arthur Pendelton
+Patient ID / MRN: P-204
+Age: 54   |   Sex: Male   |   DOB: 1972-04-12
+Collection Date: 2026-09-05 07:45 AM
+Encounter Reason: Fatigue, polydipsia, and routine hypertension follow-up
+Attending Clinician: Dr. Sarah Lin, MD
+
+========================================================================================
+TEST MARKER                     RESULT    UNITS        REFERENCE INTERVAL    METHOD
+========================================================================================
+Fasting Blood Glucose           178.0     mg/dL        70.0 - 99.0           Hexokinase
+Glycated Hemoglobin (HbA1c)     8.2       %            4.0 - 5.6             HPLC
+Hemoglobin (Hb)                 10.6      g/dL         13.0 - 17.0           SLS-Hemoglobin
+Red Blood Cell Count (RBC)      3.65      million/uL   4.30 - 5.90           Automated Cell Count
+Serum Creatinine                1.48      mg/dL        0.70 - 1.20           Enzymatic IDMS
+Blood Urea Nitrogen (BUN)       24.0      mg/dL        7.0 - 20.0            Urease
+Serum Ferritin                  42.0      ng/mL                              Chemiluminescence
+Total Cholesterol               232       mg/dL        < 200                 Spectrophotometry
+Triglycerides                   205       mg/dL        < 150                 GPO-PAP
+========================================================================================
+CLINICAL LABORATORY NOTES:
+1. Marked hyperglycemia with elevated HbA1c observed. Cross-reference clinical history for glycemic management.
+2. Moderate normocytic microcytic indices. Serum Ferritin included without local reference calibration range.
+3. Elevated nitrogenous markers suggest mild reduction in estimated glomerular filtration.
+Authorizing Pathologist: Dr. M. Chowdhury, MD
