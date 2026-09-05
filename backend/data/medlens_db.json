@@ -1,0 +1,285 @@
+{
+  "medlens_intakes": [
+    {
+      "_id": "6a9bd15643a778dead21ec3c",
+      "patient_id": "p-101",
+      "full_name": "Eleanor Vance",
+      "age": 58,
+      "gender": "Female",
+      "symptoms": [
+        "Chronic fatigue",
+        "Increased thirst",
+        "Occasional blurred vision",
+        "Mild bilateral leg edema"
+      ],
+      "chronic_conditions": [
+        "Essential Hypertension (Diagnosed 2019)"
+      ],
+      "allergies": [
+        "Penicillin (Severe anaphylactoid rash)",
+        "Sulfa drugs"
+      ],
+      "current_medications": [
+        {
+          "name": "Amlodipine",
+          "dosage": "5mg once daily",
+          "frequency": "Morning",
+          "source": "Patient Self-Reported"
+        },
+        {
+          "name": "Ibuprofen",
+          "dosage": "400mg PRN for joint pain",
+          "frequency": "As needed",
+          "source": "Patient Self-Reported"
+        }
+      ],
+      "provenance": "User-Provided (Patient Intake Form)",
+      "intake_date": "2026-09-05"
+    }
+  ],
+  "medlens_reports": [
+    {
+      "report_id": "rep-5be41bff",
+      "patient_id": "p-101",
+      "report_title": "Comprehensive Metabolic & Renal Panel",
+      "report_date": "2026-09-05",
+      "laboratory_name": "Quest Diagnostics / LalPathLabs Certified",
+      "file_name": "Lab_Report_Panel_Sep2026.pdf",
+      "file_url": "/uploads/sample_report.pdf",
+      "extracted_tests": [
+        {
+          "id": "test-101",
+          "test_name": "Fasting Blood Glucose",
+          "category": "Glycemic Control",
+          "value": "182",
+          "numeric_value": 182.0,
+          "unit": "mg/dL",
+          "reference_range": "70.0 - 99.0",
+          "ref_min": 70.0,
+          "ref_max": 99.0,
+          "status": "HIGH",
+          "status_reason": "Value (182 mg/dL) exceeds laboratory reference upper limit (99.0 mg/dL).",
+          "provenance": "AI-Extracted from Lab_Report_Panel_Sep2026.pdf (Page 1)",
+          "confidence": 0.98,
+          "is_verified": false,
+          "observation": "Fasting plasma glucose elevated.",
+          "verified_at": "2026-09-05 09:28",
+          "verified_by": "Clinical Reviewer",
+          "verification_status": "VERIFIED"
+        },
+        {
+          "id": "test-102",
+          "test_name": "Glycated Hemoglobin (HbA1c)",
+          "category": "Glycemic Control",
+          "value": "8.4",
+          "numeric_value": 8.4,
+          "unit": "%",
+          "reference_range": "4.0 - 5.6",
+          "ref_min": 4.0,
+          "ref_max": 5.6,
+          "status": "HIGH",
+          "status_reason": "Reported value (8.4%) exceeds normal threshold cutoff (5.6%).",
+          "provenance": "AI-Extracted from Lab_Report_Panel_Sep2026.pdf (Page 1)",
+          "confidence": 0.99,
+          "is_verified": false,
+          "observation": "Elevated glycemic index over past 90 days."
+        },
+        {
+          "id": "test-103",
+          "test_name": "Serum Creatinine",
+          "category": "Renal Panel",
+          "value": "1.45",
+          "numeric_value": 1.45,
+          "unit": "mg/dL",
+          "reference_range": "0.70 - 1.20",
+          "ref_min": 0.7,
+          "ref_max": 1.2,
+          "status": "HIGH",
+          "status_reason": "Value (1.45 mg/dL) is higher than laboratory upper bound (1.20 mg/dL).",
+          "provenance": "AI-Extracted from Lab_Report_Panel_Sep2026.pdf (Page 2)",
+          "confidence": 0.97,
+          "is_verified": false,
+          "observation": "Mild elevation; check hydration and renal clearance."
+        },
+        {
+          "id": "test-104",
+          "test_name": "Blood Urea Nitrogen (BUN)",
+          "category": "Renal Panel",
+          "value": "18.0",
+          "numeric_value": 18.0,
+          "unit": "mg/dL",
+          "reference_range": "7.0 - 20.0",
+          "ref_min": 7.0,
+          "ref_max": 20.0,
+          "status": "NORMAL",
+          "status_reason": "Value strictly inside normal range (7.0 - 20.0 mg/dL).",
+          "provenance": "AI-Extracted from Lab_Report_Panel_Sep2026.pdf (Page 2)",
+          "confidence": 0.99,
+          "is_verified": true,
+          "observation": "Normal urea nitrogen concentration."
+        },
+        {
+          "id": "test-105",
+          "test_name": "Total Cholesterol",
+          "category": "Lipid Profile",
+          "value": "218",
+          "numeric_value": 218.0,
+          "unit": "mg/dL",
+          "reference_range": "< 200",
+          "ref_min": null,
+          "ref_max": 200.0,
+          "status": "HIGH",
+          "status_reason": "Reported value (218 mg/dL) exceeds laboratory desirable cutoff (< 200 mg/dL).",
+          "provenance": "AI-Extracted from Lab_Report_Panel_Sep2026.pdf (Page 2)",
+          "confidence": 0.95,
+          "is_verified": false,
+          "observation": "Borderline high total cholesterol."
+        },
+        {
+          "id": "test-106",
+          "test_name": "Hemoglobin (Hb)",
+          "category": "Complete Blood Count",
+          "value": "14.2",
+          "numeric_value": 14.2,
+          "unit": "g/dL",
+          "reference_range": "13.5 - 17.5",
+          "ref_min": 13.5,
+          "ref_max": 17.5,
+          "status": "NORMAL",
+          "status_reason": "Value matches within reference limits (13.5 - 17.5 g/dL).",
+          "provenance": "AI-Extracted from Lab_Report_Panel_Sep2026.pdf (Page 3)",
+          "confidence": 0.98,
+          "is_verified": true,
+          "observation": "Healthy red blood cell oxygen carrying capacity."
+        }
+      ],
+      "inconsistencies": [
+        {
+          "id": "conflict-1f73cd",
+          "severity": "WARNING",
+          "category": "HISTORY_MISMATCH",
+          "title": "Undocumented Metabolic Indicator",
+          "description": "Lab report indicates elevated Glycated Hemoglobin (HbA1c) (8.4), but patient intake lists no chronic diabetes or metabolic history.",
+          "source_a": "Patient Intake (No Diabetes Reported)",
+          "source_b": "Extracted Report (Glycated Hemoglobin (HbA1c): 8.4)",
+          "recommendation": "Clarify glycemic history with patient; confirm if fasting protocol was strictly observed."
+        },
+        {
+          "id": "conflict-8a26a0",
+          "severity": "WARNING",
+          "category": "MEDICATION_GAP",
+          "title": "Renal Clearance vs NSAID Usage Notice",
+          "description": "Serum Creatinine (1.45 mg/dL) is elevated above reference range while patient reports taking NSAID 'Amlodipine'.",
+          "source_a": "Patient Reported Medications",
+          "source_b": "Extracted Renal Panel (Creatinine: 1.45)",
+          "recommendation": "Review nephrotoxic medication burden with attending nephrologist/physician."
+        }
+      ],
+      "plain_summary": "This clinical report summary synthesizes laboratory findings for Eleanor Vance across 6 analyzed test markers. There are 4 values outside the laboratory reference ranges, notably: Fasting Blood Glucose, Glycated Hemoglobin (HbA1c), Serum Creatinine, Total Cholesterol. These variations should be reviewed with your healthcare provider to contextualize them against your lifestyle and symptoms. Important: 2 potential history inconsistency/warning item(s) were flagged for clinical clarification.",
+      "key_findings": [
+        "Fasting Blood Glucose is elevated at 182 mg/dL (Reference: 70.0 - 99.0).",
+        "Glycated Hemoglobin (HbA1c) is elevated at 8.4 % (Reference: 4.0 - 5.6).",
+        "Serum Creatinine is elevated at 1.45 mg/dL (Reference: 0.70 - 1.20).",
+        "Total Cholesterol is elevated at 218 mg/dL (Reference: < 200).",
+        "2 markers (including Blood Urea Nitrogen (BUN), Hemoglobin (Hb)) are within standard reference ranges."
+      ],
+      "questions_for_doctor": [
+        "My Fasting Blood Glucose was 182 mg/dL. Are there specific lifestyle adjustments or follow-up tests you advise?",
+        "Could we review my documented allergies and current prescription list to ensure full compatibility?"
+      ],
+      "safety_disclaimer": "MedLens is an AI-powered clinical information intelligence tool designed solely for organizing and understanding medical records. It does NOT provide medical diagnosis, prescribe treatments, or suggest dosage changes. Always consult a licensed physician or medical professional for clinical decisions.",
+      "created_at": "2026-09-05T08:23:31.011423",
+      "_id": "6a9bd1836245164724c76a2a"
+    }
+  ],
+  "medlens_reviews": [
+    {
+      "id": "rev-101",
+      "patient_id": "p-101",
+      "patient_name": "Eleanor Vance",
+      "type": "CONFLICT",
+      "severity": "HIGH",
+      "title": "Renal Indicator vs Active NSAID Burden",
+      "description": "Serum Creatinine (1.45 mg/dL) is elevated above normal cutoff (1.20 mg/dL), while patient self-reports active Ibuprofen 400mg use for joint stiffness.",
+      "sources": [
+        "Patient Intake: Ibuprofen 400mg PRN",
+        "Renal Panel: Creatinine 1.45 mg/dL"
+      ],
+      "status": "RESOLVED",
+      "created_at": "2026-09-05 10:15",
+      "_id": "6a9bdfebbfbf6089d8d10c1a",
+      "resolution_note": "Reconciled: Advised patient to discontinue OTC Ibuprofen due to mild renal elevation; repeat panel in 2 weeks.",
+      "resolved_at": "2026-09-05 09:29"
+    },
+    {
+      "id": "rev-102",
+      "patient_id": "p-101",
+      "patient_name": "Eleanor Vance",
+      "type": "CONFLICT",
+      "severity": "HIGH",
+      "title": "Undocumented Glycemic Finding Discrepancy",
+      "description": "Fasting Blood Glucose (182 mg/dL) and HbA1c (8.4%) are markedly elevated, but patient intake lists only Essential Hypertension with zero recorded diabetes diagnosis.",
+      "sources": [
+        "Patient Intake: No Diabetes Documented",
+        "Lab Panel: FBG 182 mg/dL, HbA1c 8.4%"
+      ],
+      "status": "UNRESOLVED",
+      "created_at": "2026-09-05 10:20",
+      "_id": "6a9bdfebbfbf6089d8d10c1b"
+    },
+    {
+      "id": "rev-103",
+      "patient_id": "p-101",
+      "patient_name": "Eleanor Vance",
+      "type": "MISSING_RANGE",
+      "severity": "MEDIUM",
+      "title": "Missing Reference Range: Serum Ferritin",
+      "description": "The source report did not provide numerical reference intervals for Serum Ferritin. MedLens strictly preserved 'NOT_DETERMINED' to avoid range hallucination.",
+      "sources": [
+        "Metro Diagnostic Report Page 2"
+      ],
+      "status": "UNRESOLVED",
+      "created_at": "2026-09-05 10:25",
+      "_id": "6a9bdfebbfbf6089d8d10c1c"
+    },
+    {
+      "id": "rev-104",
+      "patient_id": "p-101",
+      "patient_name": "Eleanor Vance",
+      "type": "UNVERIFIED",
+      "severity": "LOW",
+      "title": "Pending Clinician Sign-off: Fasting Blood Glucose",
+      "description": "Critical abnormal finding Fasting Blood Glucose (182 mg/dL) was extracted from document with 98% confidence and requires clinician review.",
+      "sources": [
+        "Extracted from Quest_Metabolic_Sep2026.pdf"
+      ],
+      "status": "UNRESOLVED",
+      "created_at": "2026-09-05 10:30",
+      "_id": "6a9bdfebbfbf6089d8d10c1d"
+    }
+  ],
+  "medlens_timeline": [
+    {
+      "id": "evt-a2fae2",
+      "patient_id": "p-101",
+      "event_type": "HUMAN_VERIFICATION",
+      "title": "Finding Verify: Fasting Blood Glucose",
+      "description": "Action 'VERIFY' applied to Fasting Blood Glucose. Confirmed against source lab report page 1",
+      "timestamp": "2026-09-05 09:28",
+      "source": "Human Reviewer",
+      "entity_id": "test-101",
+      "_id": "6a9be0d65b91768fa476697d"
+    },
+    {
+      "id": "evt-ef1d44",
+      "patient_id": "p-101",
+      "event_type": "REVIEW_RESOLVED",
+      "title": "Resolved Issue: Renal Indicator vs Active NSAID Burden",
+      "description": "Reviewer resolution: Reconciled: Advised patient to discontinue OTC Ibuprofen due to mild renal elevation; repeat panel in 2 weeks.",
+      "timestamp": "2026-09-05 09:29",
+      "source": "Clinical Reviewer",
+      "entity_id": "rev-101",
+      "_id": "6a9be1136d1fad9b2b5505f4"
+    }
+  ]
+}

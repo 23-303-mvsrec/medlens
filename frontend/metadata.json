@@ -1,0 +1,6 @@
+{
+  "name": "ApexCare Hospital Admin",
+  "description": "A premium SaaS-style hospital management dashboard for modern healthcare facilities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["Dashboarding", "Role-based Access Control", "Medical Records", "Staff Management"]
+}

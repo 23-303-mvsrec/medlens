@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  medlens:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: medlens-clinical-ai
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - ALLOWED_ORIGINS=*
+    volumes:
+      - medlens_data:/app/backend/data
+      - medlens_uploads:/app/backend/uploads
+    restart: unless-stopped
+
+volumes:
+  medlens_data:
+  medlens_uploads:
